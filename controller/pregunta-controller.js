@@ -23,54 +23,58 @@ const handlePreguntaResponse = async (res, promise, successMessage, notFoundMess
 };
 
 const createPreguntaFromBody = (id, body) => {
-  return {
-    id,
-    preguntaTexto: body.preguntaTexto,
-    opcion1: body.opcion1,
-    opcion2: body.opcion2,
-    opcion3: body.opcion3,
-    opcion4: body.opcion4,
-    respuestaCorrecta: body.respuestaCorrecta
-  };
+    return {
+        id,
+        Pregunta: body.preguntaTexto,  // Cambiado de preguntaTexto a Pregunta
+        Opcion1: body.opcion1,
+        Opcion2: body.opcion2,
+        Opcion3: body.opcion3,
+        Opcion4: body.opcion4,
+        RespuestaCorrecta: body.respuestaCorrecta
+    };
 };
 
+
 router.post('/', async (req, res) => {
-  const { preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta } = req.body;
+    const { preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta } = req.body;
+    if (!preguntaTexto || !opcion1 || !opcion2 || !opcion3 || !opcion4 || respuestaCorrecta === undefined) {
+        return handleError(res, 'Todos los campos son necesarios.');
+    }
 
-  if (!preguntaTexto || !opcion1 || !opcion2 || !opcion3 || !opcion4 || respuestaCorrecta === undefined) {
-    return handleError(res, 'Todos los campos son necesarios.');
-  }
-
-  const nuevaPregunta = createPreguntaFromBody(null, req.body);
-  handlePreguntaResponse(
-    res,
-    preguntaServiceInstance.crearPregunta(nuevaPregunta),
-    true,
-    'No se pudo crear la pregunta.'
-  );
+    const nuevaPregunta = createPreguntaFromBody(null, req.body);
+    handlePreguntaResponse(
+        res,
+        preguntaServiceInstance.crearPregunta(nuevaPregunta),
+        true,
+        'No se pudo crear la pregunta.'
+    );
 });
 
 router.put('/:id', async (req, res) => {
-  const preguntaId = parseInt(req.params.id, 10);
+    console.log('Datos recibidos:', req.body);
+    console.log('ID recibido:', req.params.id);
 
-  if (isNaN(preguntaId)) {
-    return handleError(res, 'ID de pregunta no válido.');
-  }
+    const preguntaId = parseInt(req.params.id, 10);
+    if (isNaN(preguntaId)) {
+        return handleError(res, 'ID de pregunta no válido.');
+    }
 
-  const { preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta } = req.body;
+    const { preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta } = req.body;
+    if (!preguntaTexto || !opcion1 || !opcion2 || !opcion3 || !opcion4 || respuestaCorrecta === undefined) {
+        return handleError(res, 'Todos los campos son necesarios.');
+    }
 
-  if (!preguntaTexto || !opcion1 || !opcion2 || !opcion3 || !opcion4 || respuestaCorrecta === undefined) {
-    return handleError(res, 'Todos los campos son necesarios.');
-  }
+    const preguntaModificada = createPreguntaFromBody(preguntaId, req.body);
+    console.log('Pregunta modificada:', preguntaModificada);
 
-  const preguntaModificada = createPreguntaFromBody(preguntaId, req.body);
-  handlePreguntaResponse(
-    res,
-    preguntaServiceInstance.actualizarPregunta(preguntaModificada),
-    false,
-    `Pregunta con ID ${preguntaId} no encontrada.`
-  );
+    handlePreguntaResponse(
+        res,
+        preguntaServiceInstance.actualizarPregunta(preguntaModificada),
+        false,
+        `Pregunta con ID ${preguntaId} no encontrada.`
+    );
 });
+
 
 router.delete('/:id', async (req, res) => {
   const preguntaId = parseInt(req.params.id, 10);
@@ -104,6 +108,29 @@ router.get('/', async (req, res) => {
     false,
     'No se pudieron obtener las preguntas.'
   );
+
+router.post('/respuestas', async (req, res) => {
+    const { preguntaId, userId, respuestaSeleccionada, esRespuestaCorrecta } = req.body;
+
+    if (!preguntaId || !userId || respuestaSeleccionada === undefined || esRespuestaCorrecta === undefined) {
+        return handleError(res, 'Todos los campos son necesarios para crear una respuesta.');
+    }
+
+    try {
+        const respuestaCreada = await preguntaServiceInstance.crearRespuesta({
+            preguntaId,
+            userId,
+            respuestaSeleccionada,
+            esRespuestaCorrecta
+        });
+        
+        res.status(201).json(respuestaCreada);
+    } catch (error) {
+        handleError(res, 'Error al crear la respuesta: ' + error.message);
+    }
+});
+
+
 });
 
 export default router;

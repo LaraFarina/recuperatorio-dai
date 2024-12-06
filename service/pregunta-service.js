@@ -24,4 +24,9 @@ export class PreguntaService {
     async obtenerTodasLasPreguntas(palabraClave, orden) {
         return await this.bd.obtenerTodasLasPreguntas(palabraClave, orden);
     }
+
+    async crearRespuesta(respuesta) {
+    return await this.bd.crearRespuesta(respuesta);
+}
+
 }

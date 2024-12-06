@@ -6,8 +6,8 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/api/pregunta", PreguntaController);
-app.use("/api/respuesta", RespuestaController);
+app.use("/api/preguntas", PreguntaController);
+app.use("/api/respuestas", RespuestaController);
 console.log("HOLA!");
 
 const port = 3030;

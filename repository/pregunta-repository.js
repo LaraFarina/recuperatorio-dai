@@ -107,4 +107,21 @@ export class PreguntaRepository {
       throw error;
     }
   }
+
+  async crearRespuesta(respuesta) {
+    const query = `
+        INSERT INTO Respuesta (PreguntaId, UserId, RespuestaSeleccionada, EsRespuestaCorrecta, FechaCreacion)
+        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+        RETURNING *`;
+
+    const values = [
+        respuesta.preguntaId,
+        respuesta.userId,
+        respuesta.respuestaSeleccionada,
+        respuesta.esRespuestaCorrecta
+    ];
+
+    const { rows } = await this.DBClient.query(query, values);
+    return rows[0];
+}
 }
