@@ -31,30 +31,34 @@ export class PreguntaRepository {
     }
   }
 
-  async actualizarPregunta(pregunta) {
+  async actualizarPregunta(id, Pregunta) {
     try {
-      const query = `
-        UPDATE Pregunta
-        SET Pregunta = $1, Opcion1 = $2, Opcion2 = $3, Opcion3 = $4, Opcion4 = $5, RespuestaCorrecta = $6
-        WHERE PreguntaId = $7
-        RETURNING *;
-      `;
-      const values = [
-        pregunta.preguntaTexto,
-        pregunta.opcion1,
-        pregunta.opcion2,
-        pregunta.opcion3,
-        pregunta.opcion4,
-        pregunta.respuestaCorrecta,
-        pregunta.id
-      ];
-      const { rows } = await this.DBClient.query(query, values);
-      return rows[0];
+        const sql = `
+            UPDATE preguntas
+            SET
+                Pregunta = COALESCE($1, pregunta),
+                Opcion1 = COALESCE($2, opcion1),
+                Opcion2 = COALESCE($3, opcion2),
+                Opcion3 = COALESCE($4, opcion3),
+                Opcion4 = COALESCE($5, opcion4),
+                RespuestaCorrecta = COALESCE($6, RespuestaCorrecta)
+            WHERE id = $7
+            RETURNING *;
+        `;
+       
+        const values = [Pregunta.pregunta,Pregunta.opcion1,Pregunta.opcion2,Pregunta.opcion3,Pregunta.opcion4,Pregunta.respuestaCorrecta,id];
+            const result = await this.DBClient.query(sql, values);
+        if (result.rows.length > 0) {
+            return result.rows[0];
+        } else {
+            return null;
+        }
     } catch (error) {
-      console.error('Error al actualizar pregunta:', error);
-      throw error;
+        console.error("Error al actualizar la pregunta:", error);
+        throw new Error("Error al actualizar la pregunta en la base de datos.");
     }
-  }
+}
+
 
   async eliminarPregunta(preguntaId) {
     try {

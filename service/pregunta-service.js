@@ -5,12 +5,16 @@ export class PreguntaService {
         this.bd = new PreguntaRepository();
     }
 
-    async crearPregunta(pregunta) {
-        return await this.bd.crearPregunta(pregunta);
+    async crearPregunta(pregunta,fechaCreacion)
+    {
+      const crearPregunta = await PreguntaRepository.crearPregunta(Pregunta,fechaCreacion);
+      return crearPregunta;
     }
-
-    async actualizarPregunta(pregunta) {
-        return await this.bd.actualizarPregunta(pregunta);
+   
+    async actualizarPregunta(id, Pregunta)
+    {
+      const actualizarPregunta = await PreguntaRepository.actualizarPregunta(id, Pregunta);
+      return actualizarPregunta;
     }
 
     async eliminarPregunta(preguntaId) {
