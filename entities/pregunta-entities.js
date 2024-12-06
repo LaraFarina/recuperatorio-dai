@@ -1,5 +1,5 @@
 export class Pregunta {
-    constructor(id, preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta) {
-        Object.assign(this, { id, preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta });
+    constructor(id, Pregunta, Opcion1, Opcion2, Opcion3, Opcion4, RespuestaCorrecta) {
+        Object.assign(this, { id, Pregunta, Opcion1, Opcion2, Opcion3, Opcion4, RespuestaCorrecta });
     }
 }
