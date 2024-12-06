@@ -25,7 +25,7 @@ VALUES
 ('¿En qué continente se encuentra el desierto del Sahara?', 'Asia', 'África', 'América', 'Europa', 2),
 ('¿Quién fue el primer presidente de los Estados Unidos?', 'Abraham Lincoln', 'George Washington', 'Thomas Jefferson', 'Franklin D. Roosevelt', 2),
 ('¿Cuál es el océano más grande del mundo?', 'Atlántico', 'Índico', 'Ártico', 'Pacífico', 4)
-ON CONFLICT DO NOTHING; -- Evitar duplicados si las preguntas ya existen
+ON CONFLICT DO NOTHING;
 
 INSERT INTO Respuesta (PreguntaId, UserId, RespuestaSeleccionada, EsRespuestaCorrecta)
 VALUES 
