@@ -1,6 +1,6 @@
 import express from 'express';
-import PreguntaController from './controller/preguntas-controller.js';
-import RespuestaController from './controller/respuestas-controller.js';
+import PreguntaController from './controller/pregunta-controller.js';
+import RespuestaController from './controller/respuesta-controller.js';
 
 const app = express();
 
