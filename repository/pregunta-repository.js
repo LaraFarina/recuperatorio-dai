@@ -8,28 +8,13 @@ export class PreguntaRepository {
     this.DBClient.connect().catch((err) => console.error('Error al conectar con la base de datos:', err));
   }
 
-  async crearPregunta(pregunta) {
-    try {
-      const query = `
-        INSERT INTO Pregunta (Pregunta, Opcion1, Opcion2, Opcion3, Opcion4, RespuestaCorrecta, FechaCreacion)
-        VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
-        RETURNING *;
-      `;
-      const values = [
-        pregunta.preguntaTexto,
-        pregunta.opcion1,
-        pregunta.opcion2,
-        pregunta.opcion3,
-        pregunta.opcion4,
-        pregunta.respuestaCorrecta
-      ];
-      const { rows } = await this.DBClient.query(query, values);
-      return rows[0];
-    } catch (error) {
-      console.error('Error al crear pregunta:', error);
-      throw error;
-    }
-  }
+  async crearPregunta(pregunta, opcion1, opcion2, opcion3, opcion4, respuestacorrecta) {
+    const fecha = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+    const query = 'INSERT INTO Pregunta (pregunta, opcion1, opcion2, opcion3, opcion4, respuestacorrecta, fechacreacion) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+    const values = [pregunta, opcion1, opcion2, opcion3, opcion4, respuestacorrecta, fecha];
+    const { rows } = await this.DBClient.query(query, values);
+    return rows[0];
+}
 
   async actualizarPregunta(pregunta) {
     try {

@@ -39,24 +39,29 @@ const createPreguntaFromBody = (id, body) => {
   };
   
 
+ 
   router.post('/', async (req, res) => {
-    console.log('Cuerpo de la solicitud:', req.body); // Para ver el contenido del body
-  
-    const { preguntaTexto, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta } = req.body;
-  
-    if (!preguntaTexto || !opcion1 || !opcion2 || !opcion3 || !opcion4 || respuestaCorrecta === undefined) {
-      console.log('Campos faltantes:', opcion1, opcion2, opcion3, opcion4, respuestaCorrecta, preguntaTexto);
-      return handleError(res, 'Todos los campos son necesarios.');
+    try {
+        const { pregunta, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta } = req.body;
+
+        console.log(pregunta, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta );
+        // Validación de campos requeridos
+        if (!pregunta || !opcion1 || !opcion2 || !opcion3 || !opcion4 || respuestaCorrecta === undefined) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
+
+        const preguntaCreada = await preguntaServiceInstance.crearPregunta(pregunta, opcion1, opcion2, opcion3, opcion4, respuestaCorrecta);
+        if (preguntaCreada) {
+            res.status(201).json("Pregunta creada");
+        } else {
+            res.status(400).json("Pregunta no creada");
+        }
+    } catch (error) {
+        console.error('Error al crear pregunta:', error.message);
+        res.status(500).send('Error al crear pregunta');
     }
-  
-    const nuevaPregunta = createPreguntaFromBody(null, req.body);
-    handlePreguntaResponse(
-      res,
-      preguntaServiceInstance.crearPregunta(nuevaPregunta),
-      true,
-      'No se pudo crear la pregunta.'
-    );
 });
+
 
   
 
